@@ -1,4 +1,6 @@
 import vedo
+from make_look_at import make_look_at
+import numpy as np
 
 vedo.settings.allowInteraction = True
 
@@ -40,13 +42,22 @@ class TargetPoint:
 def main():
 
     agent_pose = AgentPose(Position(x=5, y=5, z=5), Quaternion(w=0, i=0, j=0, k=0))
+    target_point = TargetPoint(Position(x=4, y=2, z=5))
 
-    target_point = TargetPoint(Position(x=8, y=0, z=0))
+    rot_mat = make_look_at(
+        agent_pose.pos.vec, target_point.pos.vec, up=(0, 0, 1)
+    )
+    print(f"rot_mat: {rot_mat}")
+    print(f"agent_pose.pos.vec: {agent_pose.pos.vec}")
+    # view_vector = np.multiply(rot_mat, [*agent_pose.pos.vec, 0])[:3]
+    # view_vector = np.dot([*agent_pose.pos.vec, 1], rot_mat)[:3]
+    view_vector = np.multiply(rot_mat, [*agent_pose.pos.vec, 0])[:3]
+    print(f"view_vector: {view_vector}")
 
-    draw_scene(agent_pose, target_point)
+    draw_scene(agent_pose, target_point, view_vector)
 
 
-def draw_scene(agent, target):
+def draw_scene(agent, target, view_vector):
 
     actors = list()
 
@@ -68,10 +79,15 @@ def draw_scene(agent, target):
 
     """"viz the required rotation"""
     # center = agent.pos.vec
-    center = (0,0,0)
+    center = (0, 0, 0)
     arc_actor = vedo.Arc(center, agent.pos.vec, target.pos.vec, c="b")
     actors.append(arc_actor)
 
+    """"viz the required view vector"""
+    view_vector_actor = vedo.Arrow(agent.pos.vec, view_vector, c="g")
+    actors.append(view_vector_actor)
+
+    """Axes settings"""
     ax_range = (0, 10)
 
     axs = vedo.Axes(

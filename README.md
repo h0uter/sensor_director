@@ -1,4 +1,5 @@
 # sensor_director
+Package for calculating quaternions to point sensors at targets.
 
 ### Quickstart
 ```python
@@ -17,3 +18,15 @@ rotation = sd.calc_rotation_to_look_at_target(source_pose, target_point)
 ```
 
 reference [quaternions double check](https://quaternions.online/)
+
+
+# Dev
+It important to maintain the up direction while directing the sensor.
+So we need to translate between two frames, not just two vectors
+
+## Up Next
+
+- [ ] write some tests for basic cases
+- [ ] derive the view vetor from point and agent
+- [ ] calculate the rotation between current pose and view vector
+- [ ] vizualise the result
